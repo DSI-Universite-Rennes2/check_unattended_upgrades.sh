@@ -482,8 +482,6 @@ class ConfigResource(mplugin.Resource):
 
     expected: str
 
-    name = "config"
-
     def __init__(self, key: str, expected: str) -> None:
         self.key = key
         self.expected = expected
@@ -554,8 +552,6 @@ class CustomRepoContext(mplugin.Context):
 
 
 class DryRunResource(mplugin.Resource):
-    name = "dry_run"
-
     def probe(self) -> mplugin.Metric:
         process: subprocess.CompletedProcess[bytes] = subprocess.run(
             ("unattended-upgrades", "--dry-run")
@@ -673,8 +669,6 @@ class LastRunContext(mplugin.Context):
 
 
 class RebootResource(mplugin.Resource):
-    name = "reboot"
-
     def probe(self) -> mplugin.Metric:
         # os.path.exists instead of pathlib.Path for better testing and mocking
         return mplugin.Metric("reboot", os.path.exists("/var/run/reboot-required"))
@@ -703,8 +697,6 @@ class RebootContext(mplugin.Context):
 
 
 class SecurityResource(mplugin.Resource):
-    name = "security"
-
     def probe(self) -> mplugin.Metric:
         repos = AptConfig.get_repos()
         return mplugin.Metric("security", repos and "security" in repos)
@@ -734,8 +726,6 @@ class SecurityContext(mplugin.Context):
 
 
 class SystemdTimersResource(mplugin.Resource):
-    name = "systemd_timers"
-
     def __is_enabled(self, timer_name: str) -> bool:
         process: subprocess.CompletedProcess[str] = run(
             "systemctl", "is-enabled", timer_name
