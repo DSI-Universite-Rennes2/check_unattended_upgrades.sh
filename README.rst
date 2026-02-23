@@ -11,19 +11,22 @@ Command line interface
 
 :: 
 
-    usage: check_unattended_upgrades [-h] [-A] [-a CONFIG_VALUE] [-c TIME_UNITS]
-                                     [-D] [-d CONFIG_VALUE] [-e CONFIG_VALUE]
-                                     [-f UNIT] [-l CONFIG_VALUE] [-m CONFIG_VALUE]
-                                     [-n] [-p CUSTOM_REPOS] [-R] [-r CONFIG_VALUE]
-                                     [-S] [-s CONFIG_VALUE] [-t] [-u CONFIG_VALUE]
-                                     [-v] [-V] [-w TIME_UNITS]
+    usage: check_unattended_upgrades [-h] [-V] [-A] [-a CONFIG_VALUE]
+                                     [-c TIME_UNITS] [-D] [-d CONFIG_VALUE]
+                                     [-e CONFIG_VALUE] [-f UNIT] [-l CONFIG_VALUE]
+                                     [-m CONFIG_VALUE] [-n] [-p CUSTOM_REPOS] [-R]
+                                     [-r CONFIG_VALUE] [-S] [-s CONFIG_VALUE] [-t]
+                                     [-u CONFIG_VALUE] [-v] [-w TIME_UNITS]
 
+    version 2.0.0a1
+    Licensed under the MIT.
     Copyright (c) 2015-2026 Josef Friedrich <josef@friedrich.rocks>
 
-    Monitoring plugin to check automatic updates (unattended-upgrades) on Debian / Ubuntu.
+    Monitoring plugin to check automatic updates (unattended-upgrades) on Debian / Ubuntu
 
     options:
       -h, --help            show this help message and exit
+      -V, --version         show program's version number and exit
       -A, --anacron         Check if the package 'anacron' is installed.
       -a, --autoclean CONFIG_VALUE
                             Check if the configuration
@@ -70,7 +73,6 @@ Command line interface
                             Check if the configuration 'APT::Periodic::Unattended-
                             Upgrade' is set properly.
       -v, --verbose
-      -V, --version         show program's version number and exit
       -w, --warning TIME_UNITS
                             Time interval since the last execution to result in a
                             warning state (time units depending on '--format').

@@ -68,16 +68,12 @@ def run(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def get_argparser() -> argparse.ArgumentParser:
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(
-        # To get the right command name in the README.
-        prog="check_unattended_upgrades",
-        formatter_class=lambda prog: argparse.RawDescriptionHelpFormatter(
-            prog, width=80
-        ),  # noqa: E501
-        description="Copyright (c) 2015-2026 Josef Friedrich <josef@friedrich.rocks>\n"
-        "\n"
-        "Monitoring plugin to check automatic updates (unattended-upgrades) "
-        "on Debian / Ubuntu.\n",  # noqa: E501
+    parser = mplugin.setup_argparser(
+        name="unattended_upgrades",
+        version=__version__,
+        license="MIT",
+        copyright="Copyright (c) 2015-2026 Josef Friedrich <josef@friedrich.rocks>",
+        description="Monitoring plugin to check automatic updates (unattended-upgrades) on Debian / Ubuntu",
         epilog="Performance data:\n"
         "  - last_ago\n"
         "       Time interval in seconds for last unattended-upgrades execution.\n"
@@ -238,13 +234,6 @@ def get_argparser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument("-v", "--verbose", action="store_true", default=False)
-
-    parser.add_argument(
-        "-V",
-        "--version",
-        action="version",
-        version="%(prog)s {}".format(__version__),
-    )
 
     parser.add_argument(
         "-w",
