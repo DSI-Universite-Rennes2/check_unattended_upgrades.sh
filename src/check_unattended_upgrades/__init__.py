@@ -503,13 +503,13 @@ class ConfigContext(mplugin.Context):
         if metric.value == r.expected:
             return self.ok(
                 metric=metric,
-                hint="Configuration value for “{}”: {}".format(r.key, metric.value),
+                hint=f"Configuration value for “{r.key}”: {metric.value}",
             )
         else:
             return self.critical(
                 metric=metric,
-                hint="Configuration value for “{}” unexpected! "
-                "actual: {} expected: {}".format(r.key, metric.value, r.expected),
+                hint=f"Configuration value for “{r.key}” unexpected! "
+                f"actual: {metric.value} expected: {r.expected}",
             )
 
 
@@ -537,14 +537,14 @@ class CustomRepoContext(mplugin.Context):
         if self.name in metric.value:
             return self.ok(
                 metric=metric,
-                hint="Handling updates for custom repository '{}'.".format(self.name),
+                hint=f"Handling updates for custom repository '{self.name}'.",
             )
 
         else:
             return self.critical(
                 metric=metric,
                 hint="Unattended-upgrades is not configured to handle updates "
-                "for custom repository '{}'.".format(self.name),
+                f"for custom repository '{self.name}'.",
             )
 
 
@@ -640,22 +640,16 @@ class LastRunContext(mplugin.Context):
 
         if opts.format == "days":
             interval = total_days
-            hint = "last-run was {} days, {} hours and {} minutes ago".format(
-                total_days, total_hours % 24, total_minutes % 60
-            )
+            hint = f"last-run was {total_days} days, {total_hours % 24} hours and {total_minutes % 60} minutes ago"
         elif opts.format == "hours":
             interval = total_hours
-            hint = "last-run was {} hours, {} minutes and {} seconds ago".format(
-                total_hours, total_minutes % 60, total_seconds % 60
-            )
+            hint = f"last-run was {total_hours} hours, {total_minutes % 60} minutes and {total_seconds % 60} seconds ago"
         elif opts.format == "minutes":
             interval = total_minutes
-            hint = "last-run was {} minutes and {} seconds ago".format(
-                total_minutes, total_seconds % 60
-            )
+            hint = f"last-run was {total_minutes} minutes and {total_seconds % 60} seconds ago"
         else:
             interval = total_seconds
-            hint = "last-run was {} seconds ago".format(total_seconds)
+            hint = f"last-run was {total_seconds} seconds ago"
 
         if interval > opts.critical:
             return self.critical(metric=metric, hint=hint)
@@ -753,9 +747,7 @@ class SystemdTimersContext(mplugin.Context):
         return self.result_cls(
             state,
             metric=metric,
-            hint="The systemd timer “{}” is {}enabled.".format(
-                metric.value[0], not_string
-            ),
+            hint=f"The systemd timer “{metric.value[0]}” is {not_string}enabled.",
         )
 
 
