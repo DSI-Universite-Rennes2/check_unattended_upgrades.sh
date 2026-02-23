@@ -32,7 +32,7 @@ import subprocess
 import typing
 from importlib import metadata
 
-import nagiosplugin
+import mplugin
 
 __version__: str = metadata.version("check_unattended_upgrades")
 
@@ -450,27 +450,25 @@ class LogParser:
 # scope: anacron ##############################################################
 
 
-class AnacronResource(nagiosplugin.Resource):
-    def probe(self) -> nagiosplugin.Metric:
-        return nagiosplugin.Metric("anacron", shutil.which("anacron"))
+class AnacronResource(mplugin.Resource):
+    def probe(self) -> mplugin.Metric:
+        return mplugin.Metric("anacron", shutil.which("anacron"))
 
 
-class AnacronContext(nagiosplugin.Context):
+class AnacronContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("anacron")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         if metric.value is not None:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="Package 'anacron' is installed in: " + metric.value,
             )
         else:
-            return self.result_cls(
-                nagiosplugin.Critical,
+            return self.critical(
                 metric=metric,
                 hint="Package 'anacron' is not installed.",
             )
@@ -479,7 +477,7 @@ class AnacronContext(nagiosplugin.Context):
 # scope: config ###############################################################
 
 
-class ConfigResource(nagiosplugin.Resource):
+class ConfigResource(mplugin.Resource):
     key: str
 
     expected: str
@@ -490,29 +488,27 @@ class ConfigResource(nagiosplugin.Resource):
         self.key = key
         self.expected = expected
 
-    def probe(self) -> nagiosplugin.Metric:
+    def probe(self) -> mplugin.Metric:
         value = AptConfig.get(self.key)
-        return nagiosplugin.Metric(name=self.key, value=value, context="config")
+        return mplugin.Metric(name=self.key, value=value, context="config")
 
 
-class ConfigContext(nagiosplugin.Context):
+class ConfigContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("config")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         r: ConfigResource = typing.cast(ConfigResource, resource)
 
         if metric.value == r.expected:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="Configuration value for “{}”: {}".format(r.key, metric.value),
             )
         else:
-            return self.result_cls(
-                nagiosplugin.Critical,
+            return self.critical(
                 metric=metric,
                 hint="Configuration value for “{}” unexpected! "
                 "actual: {} expected: {}".format(r.key, metric.value, r.expected),
@@ -522,34 +518,32 @@ class ConfigContext(nagiosplugin.Context):
 # scope: custom_repo ##########################################################
 
 
-class CustomRepoResource(nagiosplugin.Resource):
+class CustomRepoResource(mplugin.Resource):
     repo: str
 
     def __init__(self, repo: str) -> None:
         super().__init__()
         self.repo = repo
 
-    def probe(self) -> nagiosplugin.Metric:
-        return nagiosplugin.Metric(self.repo, AptConfig.get_repos())
+    def probe(self) -> mplugin.Metric:
+        return mplugin.Metric(self.repo, AptConfig.get_repos())
 
 
-class CustomRepoContext(nagiosplugin.Context):
+class CustomRepoContext(mplugin.Context):
     def __init__(self, repo: str) -> None:
         super().__init__(repo)
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         if self.name in metric.value:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="Handling updates for custom repository '{}'.".format(self.name),
             )
 
         else:
-            return self.result_cls(
-                nagiosplugin.Critical,
+            return self.critical(
                 metric=metric,
                 hint="Unattended-upgrades is not configured to handle updates "
                 "for custom repository '{}'.".format(self.name),
@@ -559,32 +553,30 @@ class CustomRepoContext(nagiosplugin.Context):
 # scope: dry_run ##############################################################
 
 
-class DryRunResource(nagiosplugin.Resource):
+class DryRunResource(mplugin.Resource):
     name = "dry_run"
 
-    def probe(self) -> nagiosplugin.Metric:
+    def probe(self) -> mplugin.Metric:
         process: subprocess.CompletedProcess[bytes] = subprocess.run(
             ("unattended-upgrades", "--dry-run")
         )
-        return nagiosplugin.Metric("dry_run", process.returncode)
+        return mplugin.Metric("dry_run", process.returncode)
 
 
-class DryRunContext(nagiosplugin.Context):
+class DryRunContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("dry_run")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         if metric.value == 0:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="unattended-upgrades --dry-run exits with a zero status (OK).",
             )
         else:
-            return self.result_cls(
-                nagiosplugin.Critical,
+            return self.critical(
                 metric=metric,
                 hint="unattended-upgrades --dry-run exits with a non-zero status.",
             )
@@ -593,8 +585,8 @@ class DryRunContext(nagiosplugin.Context):
 # scope: errors_in_log ########################################################
 
 
-class WarningsInLogResource(nagiosplugin.Resource):
-    def probe(self) -> typing.Generator[nagiosplugin.Metric, None, None]:
+class WarningsInLogResource(mplugin.Resource):
+    def probe(self) -> typing.Generator[mplugin.Metric, None, None]:
         runs = LogParser.parse()
         if len(runs) > 0:
             last_run = runs[-1]
@@ -604,24 +596,24 @@ class WarningsInLogResource(nagiosplugin.Resource):
                     or message.level == "ERROR"
                     or message.level == "EXCEPTION"
                 ):
-                    yield nagiosplugin.Metric("errors_in_log", message)
+                    yield mplugin.Metric("errors_in_log", message)
 
 
-class WarningsInLogContext(nagiosplugin.Context):
+class WarningsInLogContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("errors_in_log")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         message: LogMessage = metric.value
 
-        state = nagiosplugin.Ok
+        state: mplugin.ServiceState = mplugin.ok
 
         if message.level == "ERROR" or message.level == "EXCEPTION":
-            state = nagiosplugin.Critical
+            state = mplugin.critical
         elif message.level == "WARNING":
-            state = nagiosplugin.Warn
+            state = mplugin.warn
 
         return self.result_cls(state, metric=metric, hint=message.message)
 
@@ -629,21 +621,21 @@ class WarningsInLogContext(nagiosplugin.Context):
 # scope: last_run #############################################################
 
 
-class LastRunResource(nagiosplugin.Resource):
-    def probe(self) -> nagiosplugin.Metric:
+class LastRunResource(mplugin.Resource):
+    def probe(self) -> mplugin.Metric:
         runs = LogParser.parse()
         if len(runs) == 0:
-            return nagiosplugin.Metric("last_run", 0)
-        return nagiosplugin.Metric("last_run", runs[-1].end_time)
+            return mplugin.Metric("last_run", 0)
+        return mplugin.Metric("last_run", runs[-1].end_time)
 
 
-class LastRunContext(nagiosplugin.Context):
+class LastRunContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("last_run")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         interval: int = 0
         total_seconds: int = int(datetime.datetime.now().timestamp() - metric.value)
         total_minutes: int = total_seconds // 60
@@ -670,40 +662,38 @@ class LastRunContext(nagiosplugin.Context):
             hint = "last-run was {} seconds ago".format(total_seconds)
 
         if interval > opts.critical:
-            return self.result_cls(nagiosplugin.Critical, metric=metric, hint=hint)
+            return self.critical(metric=metric, hint=hint)
         elif interval > opts.warning:
-            return self.result_cls(nagiosplugin.Warn, metric=metric, hint=hint)
+            return self.warn(metric=metric, hint=hint)
         else:
-            return self.result_cls(nagiosplugin.Ok, metric=metric, hint=hint)
+            return self.ok(metric=metric, hint=hint)
 
 
 # scope: reboot ###############################################################
 
 
-class RebootResource(nagiosplugin.Resource):
+class RebootResource(mplugin.Resource):
     name = "reboot"
 
-    def probe(self) -> nagiosplugin.Metric:
+    def probe(self) -> mplugin.Metric:
         # os.path.exists instead of pathlib.Path for better testing and mocking
-        return nagiosplugin.Metric("reboot", os.path.exists("/var/run/reboot-required"))
+        return mplugin.Metric("reboot", os.path.exists("/var/run/reboot-required"))
 
 
-class RebootContext(nagiosplugin.Context):
+class RebootContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("reboot")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         if not metric.value:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="No reboot required yet.",
             )
         else:
-            return self.result_cls(
-                nagiosplugin.Warn,
+            return self.warn(
                 metric=metric,
                 hint="The machine requires a reboot.",
             )
@@ -712,30 +702,28 @@ class RebootContext(nagiosplugin.Context):
 # scope: security #############################################################
 
 
-class SecurityResource(nagiosplugin.Resource):
+class SecurityResource(mplugin.Resource):
     name = "security"
 
-    def probe(self) -> nagiosplugin.Metric:
+    def probe(self) -> mplugin.Metric:
         repos = AptConfig.get_repos()
-        return nagiosplugin.Metric("security", repos and "security" in repos)
+        return mplugin.Metric("security", repos and "security" in repos)
 
 
-class SecurityContext(nagiosplugin.Context):
+class SecurityContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("security")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
         if metric.value:
-            return self.result_cls(
-                nagiosplugin.Ok,
+            return self.ok(
                 metric=metric,
                 hint="unattended-upgrades is handling security updates.",
             )
         else:
-            return self.result_cls(
-                nagiosplugin.Critical,
+            return self.critical(
                 metric=metric,
                 hint="unattended-upgrades is not configured to handle "
                 "security updates.",
@@ -745,7 +733,7 @@ class SecurityContext(nagiosplugin.Context):
 # scope: systemd_timers #######################################################
 
 
-class SystemdTimersResource(nagiosplugin.Resource):
+class SystemdTimersResource(mplugin.Resource):
     name = "systemd_timers"
 
     def __is_enabled(self, timer_name: str) -> bool:
@@ -754,23 +742,23 @@ class SystemdTimersResource(nagiosplugin.Resource):
         )
         return process.returncode == 0
 
-    def probe(self) -> typing.Generator[nagiosplugin.Metric, None, None]:
+    def probe(self) -> typing.Generator[mplugin.Metric, None, None]:
         for timer_name in ("apt-daily.timer", "apt-daily-upgrade.timer"):
             is_enabled: bool = self.__is_enabled(timer_name)
-            yield nagiosplugin.Metric("systemd_timers", [timer_name, is_enabled])
+            yield mplugin.Metric("systemd_timers", [timer_name, is_enabled])
 
 
-class SystemdTimersContext(nagiosplugin.Context):
+class SystemdTimersContext(mplugin.Context):
     def __init__(self) -> None:
         super().__init__("systemd_timers")
 
     def evaluate(
-        self, metric: nagiosplugin.Metric, resource: nagiosplugin.Resource
-    ) -> nagiosplugin.Result:
-        state = nagiosplugin.Ok
+        self, metric: mplugin.Metric, resource: mplugin.Resource
+    ) -> mplugin.Result:
+        state: mplugin.ServiceState = mplugin.ok
         not_string = ""
         if not metric.value[1]:
-            state = nagiosplugin.Critical
+            state = mplugin.critical
             not_string = "not "
         return self.result_cls(
             state,
@@ -786,17 +774,17 @@ class SystemdTimersContext(nagiosplugin.Context):
 ###############################################################################
 
 
-class UnattendedUpgradesSummary(nagiosplugin.Summary):
-    def ok(self, results: nagiosplugin.Results) -> str:
+class UnattendedUpgradesSummary(mplugin.Summary):
+    def ok(self, results: mplugin.Results) -> str:
         return "all"
 
-    def problem(self, results: nagiosplugin.Results) -> str:
-        summary: typing.List[nagiosplugin.Result] = []
+    def problem(self, results: mplugin.Results) -> str:
+        summary: typing.List[mplugin.Result] = []
         for result in results.most_significant:
             summary.append(result)
         return ", ".join(["{0}".format(result) for result in summary])
 
-    def verbose(self, results: nagiosplugin.Results) -> list[str]:
+    def verbose(self, results: mplugin.Results) -> list[str]:
         summary: typing.List[str] = []
         for result in results.results:
             summary.append("{0}: {1}".format(str(result.state).upper(), result))
@@ -804,7 +792,7 @@ class UnattendedUpgradesSummary(nagiosplugin.Summary):
 
 
 class ChecksCollection:
-    checks: list[nagiosplugin.Resource | nagiosplugin.Context | nagiosplugin.Summary]
+    checks: list[mplugin.Resource | mplugin.Context | mplugin.Summary]
 
     def __init__(self, opts: OptionContainer) -> None:
         self.checks = [
@@ -858,7 +846,7 @@ def main() -> None:
     LogParser.reset()
 
     checks: ChecksCollection = ChecksCollection(opts)
-    check: nagiosplugin.Check = nagiosplugin.Check(*checks.checks)
+    check: mplugin.Check = mplugin.Check(*checks.checks)
     check.name = "unattended_upgrades"
     check.main(opts.verbose)
 
