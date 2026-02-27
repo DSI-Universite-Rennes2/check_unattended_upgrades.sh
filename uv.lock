@@ -161,7 +161,7 @@ wheels = [
 [[package]]
 name = "mplugin"
 version = "2.0.0a0"
-source = { git = "https://github.com/Josef-Friedrich/mplugin.git#c1094dcb7f57cd73499e5641f388899d67b72aaa" }
+source = { git = "https://github.com/Josef-Friedrich/mplugin.git#b8ebfc556d93566ef20ff890c02ba28973684c00" }
 dependencies = [
     { name = "typing-extensions" },
 ]

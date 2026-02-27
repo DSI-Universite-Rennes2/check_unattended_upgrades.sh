@@ -6,6 +6,11 @@
     :target: https://github.com/Josef-Friedrich/check_unattended_upgrades/actions/workflows/tests.yml
     :alt: Tests
 
+Note: This monitoring plugin is written in Python from version 3 onwards.
+Earlier versions of this plugin were written in shell script. The latest version
+of the shell script can be retrieved via the `git history
+<https://github.com/Josef-Friedrich/check_unattended_upgrades/tree/66d51c1c82b28f4d69c2237dac5e291b58d2df86>`__.
+
 Command line interface
 ----------------------
 
