@@ -54,7 +54,7 @@ class OptionContainer:
     sleep: str | None
     systemd_timers: bool
     unattended: str | None
-    verbose: bool
+    verbose: int
     warning: int
 
 
@@ -94,6 +94,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "       751 (drwxr-x--x) /var/log/unattended-upgrades\n"
         "       644 (-rw-r--r--) "
         "/var/log/unattended-upgrades/unattended-upgrades.log\n",
+        verbose=True,
     )
 
     parser.add_argument(
@@ -115,7 +116,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-c",
         "--critical",
         default=187200,  # 52h = 2d + 4h
-        type=int,
+        type=mplugin.convert_timespan_to_seconds,
         metavar="TIME_UNITS",
         help="Time interval since the last execution to result in a critical "
         "state (time units depending on '--format').",
@@ -233,13 +234,11 @@ def get_argparser() -> argparse.ArgumentParser:
         "is set properly.",
     )
 
-    parser.add_argument("-v", "--verbose", action="store_true", default=False)
-
     parser.add_argument(
         "-w",
         "--warning",
         default=93600,  # 26h = 1d + 2h
-        type=int,
+        type=mplugin.convert_timespan_to_seconds,
         metavar="TIME_UNITS",
         help="Time interval since the last execution to result in a "
         "warning state (time units depending on '--format').",
