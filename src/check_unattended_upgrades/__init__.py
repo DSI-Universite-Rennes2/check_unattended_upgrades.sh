@@ -93,7 +93,8 @@ def get_argparser() -> argparse.ArgumentParser:
         "\n"
         "       751 (drwxr-x--x) /var/log/unattended-upgrades\n"
         "       644 (-rw-r--r--) "
-        "/var/log/unattended-upgrades/unattended-upgrades.log\n",
+        "/var/log/unattended-upgrades/unattended-upgrades.log\n"
+        + mplugin.TIMESPAN_FORMAT_HELP,
         verbose=True,
     )
 
@@ -113,13 +114,27 @@ def get_argparser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "-w",
+        "--warning",
+        default=93600,  # 26h = 1d + 2h
+        type=mplugin.convert_timespan_to_seconds,
+        metavar="TIMESPAN",
+        help="Time interval since the last execution to result in a "
+        "warning state. See timespan format specification below "
+        "or specify a number without time units and use the '--format' option "
+        "to select the time unit.",
+    )
+
+    parser.add_argument(
         "-c",
         "--critical",
         default=187200,  # 52h = 2d + 4h
         type=mplugin.convert_timespan_to_seconds,
-        metavar="TIME_UNITS",
+        metavar="TIMESPAN",
         help="Time interval since the last execution to result in a critical "
-        "state (time units depending on '--format').",
+        "state. See timespan format specification below "
+        "or specify a number without time units and use the '--format' option "
+        "to select the time unit.",
     )
 
     parser.add_argument(
@@ -232,16 +247,6 @@ def get_argparser() -> argparse.ArgumentParser:
         metavar="CONFIG_VALUE",
         help="Check if the configuration 'APT::Periodic::Unattended-Upgrade' "
         "is set properly.",
-    )
-
-    parser.add_argument(
-        "-w",
-        "--warning",
-        default=93600,  # 26h = 1d + 2h
-        type=mplugin.convert_timespan_to_seconds,
-        metavar="TIME_UNITS",
-        help="Time interval since the last execution to result in a "
-        "warning state (time units depending on '--format').",
     )
 
     return parser

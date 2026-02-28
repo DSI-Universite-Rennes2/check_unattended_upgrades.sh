@@ -17,11 +17,11 @@ Command line interface
 :: 
 
     usage: check_unattended_upgrades [-h] [-V] [-v] [-A] [-a CONFIG_VALUE]
-                                     [-c TIME_UNITS] [-D] [-d CONFIG_VALUE]
-                                     [-e CONFIG_VALUE] [-f UNIT] [-l CONFIG_VALUE]
-                                     [-m CONFIG_VALUE] [-n] [-p CUSTOM_REPOS] [-R]
-                                     [-r CONFIG_VALUE] [-S] [-s CONFIG_VALUE] [-t]
-                                     [-u CONFIG_VALUE] [-w TIME_UNITS]
+                                     [-w TIMESPAN] [-c TIMESPAN] [-D]
+                                     [-d CONFIG_VALUE] [-e CONFIG_VALUE] [-f UNIT]
+                                     [-l CONFIG_VALUE] [-m CONFIG_VALUE] [-n]
+                                     [-p CUSTOM_REPOS] [-R] [-r CONFIG_VALUE] [-S]
+                                     [-s CONFIG_VALUE] [-t] [-u CONFIG_VALUE]
 
     version 2.0.0a1
     Licensed under the MIT.
@@ -37,9 +37,16 @@ Command line interface
       -a, --autoclean CONFIG_VALUE
                             Check if the configuration
                             'APT::Periodic::AutocleanInterval' is set properly.
-      -c, --critical TIME_UNITS
+      -w, --warning TIMESPAN
                             Time interval since the last execution to result in a
-                            critical state (time units depending on '--format').
+                            warning state. See timespan format specification below
+                            or specify a number without time units and use the '--
+                            format' option to select the time unit.
+      -c, --critical TIMESPAN
+                            Time interval since the last execution to result in a
+                            critical state. See timespan format specification below
+                            or specify a number without time units and use the '--
+                            format' option to select the time unit.
       -D, --short-description
                             Show a short description of this check plugin.
       -d, --download CONFIG_VALUE
@@ -78,9 +85,6 @@ Command line interface
       -u, --unattended CONFIG_VALUE
                             Check if the configuration 'APT::Periodic::Unattended-
                             Upgrade' is set properly.
-      -w, --warning TIME_UNITS
-                            Time interval since the last execution to result in a
-                            warning state (time units depending on '--format').
 
     Performance data:
       - last_ago
@@ -101,6 +105,32 @@ Command line interface
 
            751 (drwxr-x--x) /var/log/unattended-upgrades
            644 (-rw-r--r--) /var/log/unattended-upgrades/unattended-upgrades.log
+
+    Timespan format
+    ---------------
+
+    If no time unit is specified, generally seconds are assumed. The following time
+    units are understood:
+
+    - years, year, y (defined as 365.25 days)
+    - months, month, M (defined as 30.44 days)
+    - weeks, week, w
+    - days, day, d
+    - hours, hour, hr, h
+    - minutes, minute, min, m
+    - seconds, second, sec, s
+    - milliseconds, millisecond, msec, ms
+    - microseconds,  microsecond, usec, μs, μ, us
+
+    The following are valid examples of timespan specifications:
+
+    - `1`
+    - `1.23`
+    - `2.345s`
+    - `3min 45.234s`
+    - `34min`
+    - `2 months 8 days`
+    - `1h30m`
 
 Project pages
 -------------
