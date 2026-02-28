@@ -597,7 +597,7 @@ class WarningsInLogContext(mplugin.Context):
         if message.level == "ERROR" or message.level == "EXCEPTION":
             state = mplugin.critical
         elif message.level == "WARNING":
-            state = mplugin.warn
+            state = mplugin.warning
 
         return self.result_cls(state, metric=metric, hint=message.message)
 
@@ -642,7 +642,7 @@ class LastRunContext(mplugin.Context):
         if interval > opts.critical:
             return self.critical(metric=metric, hint=hint)
         elif interval > opts.warning:
-            return self.warn(metric=metric, hint=hint)
+            return self.warning(metric=metric, hint=hint)
         else:
             return self.ok(metric=metric, hint=hint)
 
@@ -669,7 +669,7 @@ class RebootContext(mplugin.Context):
                 hint="No reboot required yet.",
             )
         else:
-            return self.warn(
+            return self.warning(
                 metric=metric,
                 hint="The machine requires a reboot.",
             )
