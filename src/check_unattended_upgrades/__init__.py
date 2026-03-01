@@ -117,7 +117,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-w",
         "--warning",
         default=93600,  # 26h = 1d + 2h
-        type=mplugin.convert_timespan_to_seconds,
+        type=mplugin.timespan,
         metavar="TIMESPAN",
         help="Time interval since the last execution to result in a "
         "warning state. See timespan format specification below "
@@ -129,7 +129,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-c",
         "--critical",
         default=187200,  # 52h = 2d + 4h
-        type=mplugin.convert_timespan_to_seconds,
+        type=mplugin.timespan,
         metavar="TIMESPAN",
         help="Time interval since the last execution to result in a critical "
         "state. See timespan format specification below "
