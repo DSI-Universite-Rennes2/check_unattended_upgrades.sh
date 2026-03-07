@@ -33,6 +33,7 @@ import typing
 from importlib import metadata
 
 import mplugin
+from mplugin.cli import setup_argparser
 from mplugin.timespan import TIMESPAN_FORMAT_HELP, convert_timespan_to_sec
 
 __version__: str = metadata.version("check_unattended_upgrades")
@@ -69,7 +70,7 @@ def run(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 def get_argparser() -> argparse.ArgumentParser:
-    parser = mplugin.setup_argparser(
+    parser = setup_argparser(
         name="unattended_upgrades",
         version=__version__,
         license="MIT",
