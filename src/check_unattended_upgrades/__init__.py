@@ -33,6 +33,7 @@ import typing
 from importlib import metadata
 
 import mplugin
+from mplugin.timespan import TIMESPAN_FORMAT_HELP, convert_timespan_to_sec
 
 __version__: str = metadata.version("check_unattended_upgrades")
 
@@ -93,7 +94,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "\n"
         "       751 (drwxr-x--x) /var/log/unattended-upgrades\n"
         "       644 (-rw-r--r--) "
-        "/var/log/unattended-upgrades/unattended-upgrades.log\n",
+        "/var/log/unattended-upgrades/unattended-upgrades.log\n" + TIMESPAN_FORMAT_HELP,
         verbose=True,
     )
 
@@ -116,7 +117,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-c",
         "--critical",
         default=187200,  # 52h = 2d + 4h
-        type=mplugin.convert_timespan_to_seconds,
+        type=convert_timespan_to_sec,
         metavar="TIME_UNITS",
         help="Time interval since the last execution to result in a critical "
         "state (time units depending on '--format').",
@@ -238,7 +239,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-w",
         "--warning",
         default=93600,  # 26h = 1d + 2h
-        type=mplugin.convert_timespan_to_seconds,
+        type=convert_timespan_to_sec,
         metavar="TIME_UNITS",
         help="Time interval since the last execution to result in a "
         "warning state (time units depending on '--format').",
@@ -599,7 +600,7 @@ class WarningsInLogContext(mplugin.Context):
         elif message.level == "WARNING":
             state = mplugin.warning
 
-        return self.result_cls(state, metric=metric, hint=message.message)
+        return self.result(state, metric=metric, hint=message.message)
 
 
 # scope: last_run #############################################################
@@ -732,7 +733,7 @@ class SystemdTimersContext(mplugin.Context):
         if not metric.value[1]:
             state = mplugin.critical
             not_string = "not "
-        return self.result_cls(
+        return self.result(
             state,
             metric=metric,
             hint=f"The systemd timer “{metric.value[0]}” is {not_string}enabled.",

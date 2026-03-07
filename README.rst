@@ -102,6 +102,32 @@ Command line interface
            751 (drwxr-x--x) /var/log/unattended-upgrades
            644 (-rw-r--r--) /var/log/unattended-upgrades/unattended-upgrades.log
 
+    Timespan format
+    ---------------
+
+    If no time unit is specified, generally seconds are assumed. The following time
+    units are understood:
+
+    - years, year, y (defined as 365.25 days)
+    - months, month, M (defined as 30.44 days)
+    - weeks, week, w
+    - days, day, d
+    - hours, hour, hr, h
+    - minutes, minute, min, m
+    - seconds, second, sec, s
+    - milliseconds, millisecond, msec, ms
+    - microseconds,  microsecond, usec, μs, μ, us
+
+    The following are valid examples of timespan specifications:
+
+    - `1`
+    - `1.23`
+    - `2.345s`
+    - `3min 45.234s`
+    - `34min`
+    - `2 months 8 days`
+    - `1h30m`
+
 Project pages
 -------------
 
