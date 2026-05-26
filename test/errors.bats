@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-
+ 
 setup() {
 	. ./test/lib/test-helper.sh
 	mock_path test/bin
@@ -20,19 +20,22 @@ setup() {
 	[ "${lines[0]}" = 'CRITICAL - unattended-upgrades --dry-run exits with a non-zero status.' ]
 }
 
-@test "CRITICAL last log line ERROR" {
+@test "CRITICAL line in he last log" {
 	mock_path test/bin/last_log_line_error
 	run ./check_unattended_upgrades_patched
+	printf "%q\n" "${lines[0]}"
+	printf "%q\n" "${lines[1]}"
+	printf "%q\n" "${lines[2]}"
 	[ "$status" -eq 2 ]
-	[ "${lines[0]}" = 'CRITICAL - The last line in the log file is an ERROR message.' ]
+	[ "${lines[0]}" = 'CRITICAL - In the log file is an ERROR message.' ]
 	[ "${lines[1]}" = '2019-01-12 14:35:58,860 ERROR Cache has broken packages, exiting' ]
 }
 
-@test "WARNING last log line WARNING" {
+@test "WARNING line in the last log" {
 	mock_path test/bin/last_log_line_warning
 	run ./check_unattended_upgrades_patched
 	[ "$status" -eq 1 ]
-	[ "${lines[0]}" = 'WARNING - The last line in the log file is a WARNING message.' ]
+	[ "${lines[0]}" = 'WARNING - In the log file is a WARNING message.' ]
 	[ "${lines[1]}" = '2019-01-12 14:35:58,860 WARNING lol' ]
 }
 

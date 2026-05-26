@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-
+ 
 setup() {
 	. ./test/lib/test-helper.sh
 	mock_path test/bin

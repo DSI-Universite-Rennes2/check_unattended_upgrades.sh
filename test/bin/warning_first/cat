@@ -1,2 +1,2 @@
 #! /bin/sh
-echo '2017-09-03 11:17:10,lol'
+echo '2017-09-03 11:17:10,lol INFO Starting unattended upgrades script'

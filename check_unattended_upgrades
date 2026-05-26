@@ -1,5 +1,4 @@
-#! /bin/sh
-
+#!/bin/bash
 # MIT License
 #
 # Copyright (c) 2015-2019 Josef Friedrich <josef@friedrich.rocks>
@@ -246,14 +245,14 @@ _getopts() {
 }
 
 _get_config() {
-	eval $(apt-config shell "$2" "$1")
+	eval "$(apt-config shell "$2" "$1")"
 }
 
 _check_config() {
 	local CONFIG=$1
 	local DEBIT=$2
 
-	_get_config $CONFIG "CREDIT"
+	_get_config "$CONFIG" "CREDIT"
 	if [ "$DEBIT" != "$CREDIT" ]; then
 		echo "CRITICAL - The configuration '$CONFIG' is not \
 configured properly. It has the value '$CREDIT', \
@@ -266,7 +265,7 @@ _check_systemd_timer() {
 	local TIMER=$1
 
 	if test -d /run/systemd/system ; then
-		if ! systemctl is-enabled $TIMER 1>/dev/null 2>/dev/null; then
+		if ! systemctl is-enabled "$TIMER" 1>/dev/null 2>/dev/null; then
 			echo "CRITICAL - Systemd timer $TIMER is not enabled."
 			exit $STATE_CRITICAL
 		fi
@@ -282,7 +281,7 @@ critical=$OPT_CRITICAL"
 
 ## This SEPARATOR is required for test purposes. Please don’t remove! ##
 
-_getopts $@
+_getopts "$@"
 
 # 26h = 1d + 2h
 [ -z "$OPT_WARNING" ] && OPT_WARNING=93600
@@ -318,42 +317,42 @@ if which apt-config > /dev/null 2>&1; then
 
 	# -e
 	if [ -n "$OPT_ENABLE" ]; then
-		_check_config "APT::Periodic::Enable" $OPT_ENABLE
+		_check_config "APT::Periodic::Enable" "$OPT_ENABLE"
 	fi
 
 	# -u
 	if [ -n "$OPT_UNATTENDED" ]; then
-		_check_config "APT::Periodic::Unattended-Upgrade" $OPT_UNATTENDED
+		_check_config "APT::Periodic::Unattended-Upgrade" "$OPT_UNATTENDED"
 	fi
 
 	# -m
 	if [ -n "$OPT_MAIL" ]; then
-		_check_config "Unattended-Upgrade::Mail" $OPT_MAIL
+		_check_config "Unattended-Upgrade::Mail" "$OPT_MAIL"
 	fi
 
 	# -d
 	if [ -n "$OPT_DOWNLOAD" ]; then
-		_check_config "APT::Periodic::Download-Upgradeable-Packages" $OPT_DOWNLOAD
+		_check_config "APT::Periodic::Download-Upgradeable-Packages" "$OPT_DOWNLOAD"
 	fi
 
 	# -r
 	if [ -n "$OPT_REMOVE" ]; then
-		_check_config "Unattended-Upgrade::Remove-Unused-Dependencies" $OPT_REMOVE
+		_check_config "Unattended-Upgrade::Remove-Unused-Dependencies" "$OPT_REMOVE"
 	fi
 
 	# -s
 	if [ -n "$OPT_SLEEP" ]; then
-		_check_config "APT::Periodic::RandomSleep" $OPT_SLEEP
+		_check_config "APT::Periodic::RandomSleep" "$OPT_SLEEP"
 	fi
 
 	# -l
 	if [ -n "$OPT_LISTS" ]; then
-		_check_config "APT::Periodic::Update-Package-Lists" $OPT_LISTS
+		_check_config "APT::Periodic::Update-Package-Lists" "$OPT_LISTS"
 	fi
 
 	# -a
 	if [ -n "$OPT_AUTOCLEAN" ]; then
-		_check_config "APT::Periodic::AutocleanInterval" $OPT_AUTOCLEAN
+		_check_config "APT::Periodic::AutocleanInterval" "$OPT_AUTOCLEAN"
 	fi
 
 	if [ -n "$OPT_SECURITY" ]; then
@@ -407,29 +406,36 @@ fi
 LOG_TEXT="$(cat $LOG_FILE)"
 
 if [ -z "$LOG_TEXT" ]; then
-	LATEST_COMPRESSED_LOG=$(ls -r ${LOG_FILE}.*.gz | tail -n 1)
-	LOG_TEXT="$(zcat $LATEST_COMPRESSED_LOG)"
+    latest_compressed_log=$(printf '%s\n' "${LOG_FILE}".*.gz | sort | tail -n1)
+
+    [ -f "$latest_compressed_log" ] && \
+        LOG_TEXT=$(zcat -- "$latest_compressed_log")
 fi
 
 while IFS= read -r line; do
-    if [ ! -z "$(echo "$line" | grep -E ' (WARNING|ERROR) ')" ]; then
-        # added -s check because it returns error on an empty file
-        if [ ! -z "$(echo "$line" | grep ' ERROR ')" ]; then
-            printf "CRITICAL - In the log file is an ERROR message.\n${line}"
-            exit $STATE_CRITICAL
-        fi
-
-        # added -s check because it returns error on an empty file
-        if [ ! -z "$(echo "$line" | grep ' WARNING ')" ]; then
-            printf "WARNING - In the log file is a WARNING message.\n${line}"
-            exit $STATE_WARNING
-        fi
-    fi
-done < <(printf $LOG_TEXT | tail -n "+$(echo $LOG_TEXT | grep -n 'Starting unattended upgrades script' | tail -n1 | cut -d: -f1)")
+    case "$line" in
+        *" ERROR "*)
+            printf 'CRITICAL - In the log file is an ERROR message.\n%s\n' "$line"
+            exit "$STATE_CRITICAL"
+            ;;
+        *" WARNING "*)
+            printf 'WARNING - In the log file is a WARNING message.\n%s\n' "$line"
+            exit "$STATE_WARNING"
+            ;;
+    esac
+done < <(
+    printf '%s\n' "$LOG_TEXT" |
+    tail -n "+$(
+        printf '%s\n' "$LOG_TEXT" |
+        grep -n 'Starting unattended upgrades script' |
+        tail -n1 |
+        cut -d: -f1
+    )"
+)
 
 LAST_LOG_LINE=$(echo "$LOG_TEXT" | grep -v ' WARNING ' | grep -v ' ERROR ' | tail -n 1)
 
-LAST_RUN_DATE=$(echo $LAST_LOG_LINE | cut -d "," -f 1)
+LAST_RUN_DATE=$(echo "$LAST_LOG_LINE" | cut -d "," -f 1)
 
 if [ -z "$LAST_RUN_DATE" ]; then
 	echo "CRITICAL - The date on which the command \

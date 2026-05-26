@@ -1,8 +1,10 @@
 #! /bin/sh
-echo "2017-09-01 09:55:33,260 DEBUG Checking: tor-geoipdb ([<Origin component:'main' archive:'zesty' origin:'TorProject' label:'' site:'deb.torproject.org' isTrusted:True>, <Origin component:'main' archive:'zesty' origin:'TorProject' label:'' site:'deb.torproject.org' isTrusted:True>])
+echo "2017-09-01 09:55:33,250 INFO Starting unattended upgrades script
+2017-09-01 09:55:33,260 DEBUG Checking: tor-geoipdb ([<Origin component:'main' archive:'zesty' origin:'TorProject' label:'' site:'deb.torproject.org' isTrusted:True>, <Origin component:'main' archive:'zesty' origin:'TorProject' label:'' site:'deb.torproject.org' isTrusted:True>])
 2017-09-01 09:55:33,312 DEBUG pkgs that look like they should be upgraded:
 2017-09-01 09:55:33,379 DEBUG fetch.run() result: 0
 2017-09-01 09:55:33,379 DEBUG blacklist: []
 2017-09-01 09:55:33,379 DEBUG whitelist: []
 2017-09-01 09:55:34,218 INFO Keine Pakete zur Aktualisierung gefunden, es sind keine automatischen Löschungen vorzunehmen
+2019-01-12 14:35:58,800 INFO Starting unattended upgrades script
 2019-01-12 14:35:58,860 WARNING lol"
