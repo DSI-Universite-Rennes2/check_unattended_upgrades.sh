@@ -23,9 +23,6 @@ setup() {
 @test "CRITICAL line in he last log" {
 	mock_path test/bin/last_log_line_error
 	run ./check_unattended_upgrades_patched
-	printf "%q\n" "${lines[0]}"
-	printf "%q\n" "${lines[1]}"
-	printf "%q\n" "${lines[2]}"
 	[ "$status" -eq 2 ]
 	[ "${lines[0]}" = 'CRITICAL - In the log file is an ERROR message.' ]
 	[ "${lines[1]}" = '2019-01-12 14:35:58,860 ERROR Cache has broken packages, exiting' ]
