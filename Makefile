@@ -10,9 +10,6 @@ test:
 	./test/lib/skeleton.sh --test
 	rm ./check_unattended_upgrades_patched
 
-readme:
-	./test/lib/skeleton.sh --render-readme
-
 sync_skeleton:
 	mkdir -p test/lib
 	wget -O test/lib/skeleton.sh https://raw.githubusercontent.com/Josef-Friedrich/skeleton.sh/master/skeleton.sh
