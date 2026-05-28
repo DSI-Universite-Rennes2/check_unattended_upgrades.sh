@@ -8,6 +8,7 @@ test:
 	@echo
 
 	./test/lib/skeleton.sh --test
+	rm ./check_unattended_upgrades_patched
 
 readme:
 	./test/lib/skeleton.sh --render-readme

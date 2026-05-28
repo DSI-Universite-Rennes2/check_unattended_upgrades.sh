@@ -1,7 +1,7 @@
 ---
-name: check_unattended_upgrades
+name: check_unattended_upgrades_bash
 description: "file:///README.md"
-url: "https://github.com/Josef-Friedrich/check_unattended_upgrades"
+url: "https://github.com/DSI-Universite-Rennes2/check_unattended_upgrades"
 tags: unattended-upgrades, apt
 vendor: Linux
 target: Debian, Ubuntu
@@ -9,11 +9,11 @@ type: Plugin
 license: mit
 releases:
   -
-    name: 1.2
-    description: "1.2 Release"
+    name: 1.4.1
+    description: "1.4.1 Release"
     files:
       -
-        name: check_unattended_upgrades
+        name: check_unattended_upgrades_bash
         url: "file:///check_unattended_upgrades"
-        description: "1.2 Release"
-        checksum: 56ae2f2b52d35aba01145dee00a41586
+        description: "1.4.1 Release"
+        checksum: df3ba51a7518a59da1eea2e77bf4abf1

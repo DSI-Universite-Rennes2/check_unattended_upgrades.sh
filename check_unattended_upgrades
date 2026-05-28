@@ -1,7 +1,9 @@
 #!/bin/bash
 # MIT License
 #
-# Copyright (c) 2015-2019 Josef Friedrich <josef@friedrich.rocks>
+# Copyright (c) 2015-2022 Josef Friedrich <josef@friedrich.rocks>
+# Copyright (c) 2026 Yann 'Ze' Richard <yann.richard@univ-rennes2.fr>
+#                    DSI - Université Rennes 2
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -85,18 +87,20 @@
 # (seconds).
 #OPT_WARNING=93600
 
-FIRST_RELEASE=2015-04-25
-VERSION=1.4
-PROJECT_PAGES='https://github.com/Josef-Friedrich/check_unattended_upgrades
-https://exchange.icinga.com/joseffriedrich/check_unattended_upgrades
-https://exchange.nagios.org/directory/Plugins/Software/check_unattended_upgrades/details'
+FIRST_JF_RELEASE=2015-04-25
+LAST_JF_RELEASE=2022-11-18
+FIRST_UR2_RELEASE=2026-05-26
+LAST_UR2_RELEASE=$(date +%Y-%m-%d)
+VERSION=1.4.1
 SHORT_DESCRIPTION="Monitoring plugin to check automatic updates \
-(unattended-upgrades) on Debian / Ubuntu."
+(unattended-upgrades) on Debian GNU Linux or derivative distributions like Ubuntu, Linux Mint etc. \
+with minimal dependencies as possible"
 USAGE="check_unattended_upgrades v$VERSION
-Copyright (c) $(date +%Y --date=$FIRST_RELEASE)-$(date +%Y) Josef Friedrich <josef@friedrich.rocks>
+© $(date +%Y --date="$FIRST_JF_RELEASE")-$(date +%Y --date="$LAST_JF_RELEASE") Josef Friedrich <josef@friedrich.rocks>
+© $(date +%Y --date="$FIRST_UR2_RELEASE")-$(date +%Y --date="$LAST_UR2_RELEASE") Yann 'Ze' Richard <yann.richard@univ-rennes2.fr>
+                      DSI - Université Rennes 2
 
 $SHORT_DESCRIPTION
-
 
 Usage: check_unattended_upgrades <options>
 
