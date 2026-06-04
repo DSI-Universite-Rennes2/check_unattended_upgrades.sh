@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare artifacts
+        run: |
+          mkdir release
+          cp check_unattended_upgrades release/
+
+          cd release
+          sha256sum check_unattended_upgrades > check_unattended_upgrades.sha256
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/check_unattended_upgrades
+            release/check_unattended_upgrades.sha256

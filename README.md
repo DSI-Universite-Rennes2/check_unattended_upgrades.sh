@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/Josef-Friedrich/check_unattended_upgrades.svg?branch=master)](https://travis-ci.org/Josef-Friedrich/check_unattended_upgrades)
+
+[![Trigger: Shell Check](https://github.com/DSI-Universite-Rennes2/check_unattended_upgrades.sh/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/DSI-Universite-Rennes2/check_unattended_upgrades.sh/actions/workflows/main.yml)
 
 # check_unattended_upgrades
 
