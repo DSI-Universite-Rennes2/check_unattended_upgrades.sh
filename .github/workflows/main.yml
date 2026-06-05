@@ -1,22 +1,20 @@
+name: 'ShellCheck'
+
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
-
-name: 'ShellCheck'
 
 jobs:
   shellcheck:
-    name: Shellcheck
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v6
-    - name: Run ShellCheck
-      uses: ludeeus/action-shellcheck@master
-      with: 
-        ignore_paths: test/*
-        additional_files: 'check_unattended_upgrades'
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        run: shellcheck --shell=bash check_unattended_upgrades
 
